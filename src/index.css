@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #FFFFFF;
+    --color-bg-secondary: #F8F8F8;
+    --color-bg-card: #F0F0F0;
+    --color-text-primary: #1A1A1A;
+    --color-text-muted: #6B6B6B;
+    --color-border: #E5E5E5;
+    --color-overlay: rgba(0, 0, 0, 0.5);
+  }
+
+  .dark {
+    --color-bg: #0A0A0A;
+    --color-bg-secondary: #111111;
+    --color-bg-card: #1A1A1A;
+    --color-text-primary: #F5F5F5;
+    --color-text-muted: #8A8A8A;
+    --color-border: #2A2A2A;
+    --color-overlay: rgba(0, 0, 0, 0.8);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-[var(--color-bg)] text-[var(--color-text-primary)] antialiased;
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[var(--color-bg)];
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[var(--color-border)] rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gold;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--color-bg) inset !important;
+    -webkit-text-fill-color: var(--color-text-primary) !important;
+  }
+}
+
+@layer utilities {
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  .text-shadow-md {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  .text-shadow-lg {
+    text-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  }
+}
