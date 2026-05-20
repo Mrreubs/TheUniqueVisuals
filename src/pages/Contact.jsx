@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useNotification } from '../contexts/NotificationContext';
+import { sendContactNotification } from '../services/emailService';
 
 const INITIAL_FORM = { name: '', email: '', phone: '', message: '' };
 
@@ -27,6 +28,7 @@ export default function Contact() {
         type: 'contact',
         createdAt: serverTimestamp(),
       });
+      sendContactNotification(formData);
       setFormData(INITIAL_FORM);
       setIsSubmitted(true);
       setTimeout(() => setIsSubmitted(false), 5000);

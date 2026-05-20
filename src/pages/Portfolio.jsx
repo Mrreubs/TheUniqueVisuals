@@ -4,6 +4,7 @@ import { X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import CommentsSection from '../components/ui/CommentsSection';
 
 const BASE = import.meta.env.BASE_URL;
 const CATEGORIES = ['All', 'Wedding', 'Portrait', 'Fashion', 'Event'];
@@ -185,6 +186,10 @@ export default function Portfolio() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <section className="max-w-[75rem] mx-auto px-6 pt-24 pb-16 border-t border-gray-200 dark:border-white/10 mt-24">
+        <CommentsSection page="portfolio" />
+      </section>
     </div>
   );
 }

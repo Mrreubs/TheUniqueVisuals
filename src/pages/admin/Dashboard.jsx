@@ -11,6 +11,7 @@ import {
   Image as ImageIcon,
   Users,
   MessageSquare,
+  MessageCircle,
   LogOut,
   Upload,
   Trash2,
@@ -72,6 +73,7 @@ const TABS = [
   { key: 'portfolio', label: 'Portfolio Upload', icon: ImageIcon },
   { key: 'users', label: 'Clients', icon: Users },
   { key: 'content', label: 'Reviews', icon: MessageSquare },
+  { key: 'comments', label: 'Comments', icon: MessageCircle },
 ];
 
 export default function Dashboard() {
@@ -80,9 +82,10 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('analytics');
 
-  const [stats, setStats] = useState({ users: 0, bookings: 0, testimonials: 0 });
+  const [stats, setStats] = useState({ users: 0, bookings: 0, testimonials: 0, comments: 0 });
   const [usersList, setUsersList] = useState([]);
   const [testimonialsList, setTestimonialsList] = useState([]);
+  const [commentsList, setCommentsList] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
 
   const [uploadForm, setUploadForm] = useState({ category: 'Wedding', file: null });
@@ -109,6 +112,12 @@ export default function Dashboard() {
         const snapshot = await getDocs(testQ);
         setStats((prev) => ({ ...prev, testimonials: snapshot.size }));
         setTestimonialsList(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      }
+      if (activeTab === 'analytics' || activeTab === 'comments') {
+        const commentsQ = query(collection(db, 'comments'), orderBy('createdAt', 'desc'));
+        const commentsSnap = await getDocs(commentsQ);
+        setStats((prev) => ({ ...prev, comments: commentsSnap.size }));
+        setCommentsList(commentsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
       }
     } catch (err) {
       console.error('Error fetching admin data:', err);
@@ -153,6 +162,18 @@ export default function Dashboard() {
     }
   }
 
+  async function handleDeleteComment(id) {
+    if (!window.confirm('Delete this comment?')) return;
+    try {
+      await deleteDoc(doc(db, 'comments', id));
+      setCommentsList((prev) => prev.filter((c) => c.id !== id));
+      addNotification('Deleted successfully');
+    } catch (err) {
+      console.error('Error deleting', err);
+      addNotification('Failed to delete. Check permissions.', 'error');
+    }
+  }
+
   async function handleDeleteTestimonial(id) {
     if (!window.confirm('Delete this testimonial?')) return;
     try {
@@ -182,6 +203,7 @@ export default function Dashboard() {
     { icon: Users, value: stats.users, label: 'Registered Clients' },
     { icon: Calendar, value: stats.bookings, label: 'Total Bookings Recorded' },
     { icon: MessageSquare, value: stats.testimonials, label: 'Testimonials Submitted' },
+    { icon: MessageCircle, value: stats.comments, label: 'Comments Posted' },
   ];
 
   return (
@@ -239,7 +261,7 @@ export default function Dashboard() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   {statCards.map((card, i) => (
                     <div
                       key={i}
@@ -416,6 +438,45 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+
+            {activeTab === 'comments' && (
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <h2 className="text-3xl font-semibold mb-2">Manage Comments</h2>
+                <p className="text-gray-600 dark:text-white/60">Moderate user comments from across the site.</p>
+
+                <div className="space-y-4">
+                  {commentsList.length === 0 ? (
+                    <div className="p-6 text-center text-gray-600 dark:text-white/60 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl">
+                      No comments found.
+                    </div>
+                  ) : (
+                    commentsList.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-2xl flex justify-between items-start gap-4"
+                      >
+                        <div>
+                          <div className="flex gap-2 items-center mb-2">
+                            <span className="font-medium text-gray-900 dark:text-white">{item.name}</span>
+                            <span className="text-xs text-gray-600 dark:text-white/60 ml-2">
+                              {item.page || 'general'}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 dark:text-white/60 text-sm">{item.text}</p>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteComment(item.id)}
+                          className="text-red-500 hover:bg-red-500/10 p-3 rounded-lg flex-shrink-0 transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
           </motion.div>
         </div>
       </div>

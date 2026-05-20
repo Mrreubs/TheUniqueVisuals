@@ -5,6 +5,7 @@ import { db } from '../../firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
+import { sendBookingNotification } from '../../services/emailService';
 
 const INITIAL_FORM = { name: '', email: '', phone: '', type: '', date: '', message: '' };
 
@@ -41,6 +42,7 @@ export default function BookingModal({ isOpen, onClose }) {
         status: 'Pending',
         createdAt: serverTimestamp(),
       });
+      sendBookingNotification(formData);
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
