@@ -7,9 +7,9 @@ import BookingModal from '../components/ui/BookingModal';
 const BASE = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
 
 const HERO_IMAGES = [
-  `${BASE}images/couple.webp`,
-  `${BASE}images/img_4744.webp`,
-  `${BASE}images/group.webp`,
+  `${BASE}images/_mg_0970.webp`,
+  `${BASE}images/bride-core.webp`,
+  `${BASE}images/img_8374.webp`,
 ];
 
 const PORTFOLIO_PREVIEW = [
@@ -17,6 +17,10 @@ const PORTFOLIO_PREVIEW = [
   { id: 2, url: `${BASE}images/img_4745.webp`, category: "Portrait", span: "col-span-1 row-span-1" },
   { id: 3, url: `${BASE}images/after-party.webp`, category: "Event", span: "col-span-1 row-span-1" },
   { id: 4, url: `${BASE}images/bride-core.webp`, category: "Fashion", span: "col-span-2 md:col-span-2 row-span-1" },
+  { id: 5, url: `${BASE}images/couple-core.webp`, category: "Wedding", span: "col-span-1 row-span-1" },
+  { id: 6, url: `${BASE}images/img_6051.webp`, category: "Event", span: "col-span-1 row-span-1" },
+  { id: 7, url: `${BASE}images/_mg_1190_1.webp`, category: "Fashion", span: "col-span-1 row-span-1" },
+  { id: 8, url: `${BASE}images/img_4737.webp`, category: "Portrait", span: "col-span-1 row-span-1" },
 ];
 
 export default function Home() {
