@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, query, orderBy, where, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 const DUMMY_TESTIMONIALS = [
   { id: '1', name: 'Adesuwa & Femi', rating: 5, review: 'Unique Visuals gave us exactly what we wanted for our wedding. The pictures look like they belong in a magazine! Their professionalism was unmatched.', date: 'Oct 2023' },
@@ -22,6 +23,7 @@ export default function Testimonials() {
   const [review, setReview] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -66,10 +68,10 @@ export default function Testimonials() {
       setShowForm(false);
       setReview('');
       setRating(5);
-      alert('Thank you! Your review has been submitted and is pending approval.');
+      addNotification('Thank you! Your review has been submitted and is pending approval.');
     } catch (error) {
       console.error("Error adding review:", error);
-      alert('Failed to submit review. Please try again.');
+      addNotification('Failed to submit review. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -155,7 +157,7 @@ export default function Testimonials() {
             currentUser ? (
               <button 
                 onClick={() => setShowForm(true)}
-                className="bg-gold hover:bg-gold-light text-dark px-8 py-3 rounded font-bold uppercase tracking-widest transition-colors"
+                className="bg-gold hover:bg-gold-light text-white px-8 py-3 rounded font-bold uppercase tracking-widest transition-colors"
               >
                 Write a Review
               </button>
@@ -177,7 +179,7 @@ export default function Testimonials() {
                       key={num}
                       type="button"
                       onClick={() => setRating(num)}
-                      className="focus:outline-none"
+                      className="focus:outline-none p-1.5"
                     >
                       <Star size={32} className={num <= rating ? "text-gold fill-gold" : "text-gray-300 dark:text-white/20"} />
                     </button>
@@ -201,7 +203,7 @@ export default function Testimonials() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-gold hover:bg-gold-light text-dark font-bold uppercase tracking-widest py-3 rounded transition-colors disabled:opacity-50"
+                  className="flex-1 bg-gold hover:bg-gold-light text-white font-bold uppercase tracking-widest py-3 rounded transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </button>

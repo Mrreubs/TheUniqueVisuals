@@ -8,12 +8,12 @@ import { db } from '../firebase/config';
 const CATEGORIES = ['All', 'Wedding', 'Portrait', 'Fashion', 'Event'];
 
 const DUMMY_PORTFOLIO = [
-  { id: '1', url: "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=2070&auto=format&fit=crop", category: "Wedding", title: "Adesuwa & Femi" },
-  { id: '2', url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop", category: "Portrait", title: "Studio Session" },
-  { id: '3', url: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2070&auto=format&fit=crop", category: "Event", title: "Gala Night" },
-  { id: '4', url: "https://images.unsplash.com/photo-1509631179647-0c37cb1100f8?q=80&w=1887&auto=format&fit=crop", category: "Fashion", title: "Vogue Editorial" },
-  { id: '5', url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop", category: "Wedding", title: "The Vows" },
-  { id: '6', url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop", category: "Portrait", title: "Golden Hour" },
+  { id: '1', url: "/images/couple.webp", category: "Wedding", title: "Adesuwa & Femi" },
+  { id: '2', url: "/images/girls-2.webp", category: "Portrait", title: "Studio Session" },
+  { id: '3', url: "/images/group.webp", category: "Event", title: "Gala Night" },
+  { id: '4', url: "/images/couple-core.webp", category: "Fashion", title: "Vogue Editorial" },
+  { id: '5', url: "/images/couple-3.webp", category: "Wedding", title: "The Vows" },
+  { id: '6', url: "/images/men.webp", category: "Portrait", title: "Golden Hour" },
 ];
 
 export default function Portfolio() {
@@ -89,9 +89,9 @@ export default function Portfolio() {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
+               className={`px-6 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
                 activeCategory === category 
-                  ? 'bg-gold text-dark' 
+                  ? 'bg-gold text-white'
                   : 'bg-transparent text-gray-600 dark:text-white border border-gray-300 dark:border-white/20 hover:border-gold hover:text-gold'
               }`}
             >
@@ -149,8 +149,8 @@ export default function Portfolio() {
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 dark:bg-dark/95 backdrop-blur-sm p-4 md:p-12"
             onClick={() => setSelectedImage(null)}
           >
-            <button 
-              className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-2 z-[110]"
+             <button 
+              className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-2.5 z-[110]"
               onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
             >
               <X size={32} />

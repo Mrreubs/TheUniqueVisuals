@@ -5,16 +5,16 @@ import { Camera, Video, Users, Star, ArrowRight } from 'lucide-react';
 import BookingModal from '../components/ui/BookingModal';
 
 const HERO_IMAGES = [
-  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=2070&auto=format&fit=crop",
+  "/images/couple.webp",
+  "/images/img_4744.webp",
+  "/images/group.webp",
 ];
 
 const PORTFOLIO_PREVIEW = [
-  { id: 1, url: "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=2070&auto=format&fit=crop", category: "Wedding", span: "col-span-1 row-span-2" },
-  { id: 2, url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop", category: "Portrait", span: "col-span-1 row-span-1" },
-  { id: 3, url: "https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2070&auto=format&fit=crop", category: "Event", span: "col-span-1 row-span-1" },
-  { id: 4, url: "https://images.unsplash.com/photo-1509631179647-0c37cb1100f8?q=80&w=1887&auto=format&fit=crop", category: "Fashion", span: "col-span-2 md:col-span-2 row-span-1" },
+  { id: 1, url: "/images/couple-2.webp", category: "Wedding", span: "col-span-1 row-span-2" },
+  { id: 2, url: "/images/img_4745.webp", category: "Portrait", span: "col-span-1 row-span-1" },
+  { id: 3, url: "/images/after-party.webp", category: "Event", span: "col-span-1 row-span-1" },
+  { id: 4, url: "/images/bride-core.webp", category: "Fashion", span: "col-span-2 md:col-span-2 row-span-1" },
 ];
 
 export default function Home() {
@@ -78,7 +78,7 @@ export default function Home() {
           >
             <button 
               onClick={() => setIsBookingModalOpen(true)}
-              className="bg-gold hover:bg-gold-light text-dark px-8 py-4 rounded text-sm md:text-base font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)] w-full sm:w-auto"
+              className="bg-gold hover:bg-gold-light text-white px-8 py-4 rounded text-sm md:text-base font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)] w-full sm:w-auto"
             >
               Book a Shoot
             </button>
@@ -96,7 +96,7 @@ export default function Home() {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 transition-all duration-300 rounded-full ${currentSlide === index ? 'w-8 bg-gold' : 'w-2 bg-white/40'}`}
+               className={`h-3 min-w-[44px] transition-all duration-300 rounded-full ${currentSlide === index ? 'w-12 bg-gold' : 'w-3 bg-white/40'}`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
@@ -126,7 +126,7 @@ export default function Home() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img src="https://images.unsplash.com/photo-1554046920-90dcac0536d1?q=80&w=1958&auto=format&fit=crop" alt="Photographer" className="object-cover w-full h-full" />
+          <img src="/images/_mg_1526.webp" alt="Photographer" className="object-cover w-full h-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         </motion.div>
       </section>
@@ -212,14 +212,14 @@ export default function Home() {
 
       <section className="py-32 px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gray-900 dark:bg-dark z-0" />
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10 z-0 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[url('/images/_mg_0970.webp')] bg-cover bg-center opacity-10 z-0 mix-blend-overlay" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-8">Ready to create magic?</h2>
           <p className="text-xl text-white/60 mb-12">Let's discuss your next shoot and bring your vision to life.</p>
           <button 
             onClick={() => setIsBookingModalOpen(true)}
-            className="bg-gold hover:bg-gold-light text-dark px-10 py-5 rounded text-lg font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)] w-full sm:w-auto"
+            className="bg-gold hover:bg-gold-light text-white px-10 py-5 rounded text-lg font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)] w-full sm:w-auto"
           >
             Let's Talk
           </button>

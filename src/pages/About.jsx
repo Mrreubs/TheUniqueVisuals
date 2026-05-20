@@ -40,7 +40,7 @@ export default function About() {
             transition={{ duration: 1 }}
           >
             <img 
-              src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop" 
+              src="/images/_mg_0970.webp" 
               alt="Photographer at work" 
               className="object-cover w-full h-full"
             />
@@ -129,9 +129,9 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Emmanuel O.", role: "Lead Photographer", img: "https://images.unsplash.com/photo-1552058544-f2b08422138a?q=80&w=1899&auto=format&fit=crop" },
-              { name: "Sarah K.", role: "Creative Director", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop" },
-              { name: "Michael T.", role: "Lead Editor", img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1887&auto=format&fit=crop" }
+              { name: "Emmanuel O.", role: "Lead Photographer", img: "/images/groom.webp" },
+              { name: "Sarah K.", role: "Creative Director", img: "/images/img_4744.webp" },
+              { name: "Michael T.", role: "Lead Editor", img: "/images/men.webp" }
             ].map((member, i) => (
               <motion.div 
                 key={i}

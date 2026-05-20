@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import { User, Settings, Calendar, LogOut, Trash2, Edit3 } from 'lucide-react';
 
 export default function Profile() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, signOut, updateUserProfile, deleteAccount } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -16,26 +18,33 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut();
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
     }
   };
 
-  const handleUpdateProfile = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    console.log('Profile updated to:', editForm);
-    setIsEditing(false);
-    alert('Profile updated successfully (Stub)');
+    try {
+      await updateUserProfile(editForm);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      addNotification('Failed to update profile. Please try again.', 'error');
+    }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     const confirmed = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
-    if (confirmed) {
-      console.log('Account deleted');
-      alert('Account deleted successfully (Stub)');
-      handleLogout();
+    if (!confirmed) return;
+    try {
+      await deleteAccount();
+      navigate('/login');
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+      addNotification('Failed to delete account. Please try again. You may need to re-login first.', 'error');
     }
   };
 
@@ -110,7 +119,7 @@ export default function Profile() {
                     {!isEditing && (
                       <button 
                         onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2 text-sm text-gold hover:text-white transition-colors px-4 py-2 bg-gold/10 rounded-full"
+                        className="flex items-center gap-2 text-sm text-gold hover:text-white transition-colors px-4 py-2.5 bg-gold/10 rounded-full"
                       >
                         <Edit3 size={16} /> Edit Profile
                       </button>
@@ -142,14 +151,14 @@ export default function Profile() {
                       <div className="flex gap-4 pt-4">
                         <button 
                           type="submit"
-                          className="px-6 py-2.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-full hover:bg-gold hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                          className="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-full hover:bg-gold hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                         >
                           Save Changes
                         </button>
                         <button 
                           type="button"
                           onClick={() => setIsEditing(false)}
-                          className="px-6 py-2.5 bg-transparent border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white font-medium rounded-full hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-white/40 transition-colors"
+                          className="px-6 py-3 bg-transparent border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white font-medium rounded-full hover:bg-gray-100 dark:hover:bg-white/10 hover:border-gray-400 dark:hover:border-white/40 transition-colors"
                         >
                           Cancel
                         </button>
@@ -195,7 +204,7 @@ export default function Profile() {
                             </div>
                           </div>
                           <div>
-                            <span className={`px-4 py-1.5 rounded-full text-xs font-medium ${booking.status === 'Confirmed' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-blue-500/10 text-blue-500 border border-blue-500/20'}`}>
+                            <span className={`px-4 py-1.5 rounded-full text-xs font-medium ${booking.status === 'Confirmed' ? 'bg-gold/10 text-gold border border-gold/20' : 'bg-gold/10 text-gold border border-gold/20'}`}>
                               {booking.status}
                             </span>
                           </div>
@@ -231,7 +240,7 @@ export default function Profile() {
                         </p>
                         <button 
                           onClick={handleDeleteAccount}
-                          className="px-6 py-2.5 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                          className="px-6 py-3 bg-red-500 text-white font-medium rounded-full hover:bg-red-600 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
                         >
                           Delete My Account
                         </button>

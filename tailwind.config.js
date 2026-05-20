@@ -9,9 +9,9 @@ export default {
     extend: {
       colors: {
         gold: {
-          DEFAULT: '#C9A84C',
-          light: '#E8C97A',
-          dark: '#A07830',
+          DEFAULT: '#7F1717',
+          light: '#E5CACA',
+          dark: '#292929',
         },
         dark: {
           DEFAULT: '#0A0A0A',
@@ -108,8 +108,8 @@ export default {
       },
       keyframes: {
         pulseGold: {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(201,168,76,0.4)' },
-          '50%': { boxShadow: '0 0 0 12px rgba(201,168,76,0)' },
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(127, 23, 23, 0.4)' },
+          '50%': { boxShadow: '0 0 0 12px rgba(127, 23, 23, 0)' },
         },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },

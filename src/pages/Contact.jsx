@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import { useNotification } from '../contexts/NotificationContext';
 
 export default function Contact() {
+  const { addNotification } = useNotification();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,19 +25,26 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    console.log('Email sent via EmailJS stub', formData);
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', phone: '', message: '' });
-
-    setTimeout(() => setIsSubmitted(false), 5000);
+    try {
+      await addDoc(collection(db, 'messages'), {
+        ...formData,
+        type: 'contact',
+        createdAt: serverTimestamp()
+      });
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      addNotification("Failed to send message. Please try again.", "error");
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="bg-white dark:bg-dark text-gray-900 dark:text-white min-h-screen pt-24 pb-16">
-      <div className="max-w-[90%] mx-auto">
+      <div className="max-w-[75rem] mx-auto">
 
         <motion.div 
           initial={{ opacity: 0, y: 30 }}

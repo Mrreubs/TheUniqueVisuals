@@ -23,13 +23,17 @@
     --color-overlay: rgba(0, 0, 0, 0.8);
   }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
     @apply bg-[var(--color-bg)] text-[var(--color-text-primary)] antialiased;
-    overflow-x: hidden;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 

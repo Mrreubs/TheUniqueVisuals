@@ -12,7 +12,7 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { signup, googleSignIn } = useAuth();
+  const { signUp, googleSignIn } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -25,7 +25,7 @@ export default function Signup() {
     try {
       setError('');
       setLoading(true);
-      await signup(email, password, name);
+      await signUp(email, password, name);
       navigate('/profile');
     } catch (err) {
       setError('Failed to create an account. ' + err.message);

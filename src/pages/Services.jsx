@@ -109,7 +109,7 @@ export default function Services() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               {service.popular && (
-                <div className="absolute top-6 right-6 bg-gold text-dark text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <div className="absolute top-6 right-6 bg-gold text-white text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">
                   Most Popular
                 </div>
               )}
@@ -119,7 +119,7 @@ export default function Services() {
               <h3 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-2">{service.title}</h3>
               <p className="text-gold font-bold tracking-widest uppercase mb-6">{service.price}</p>
 
-              <p className="text-gray-700 dark:text-white/70 leading-relaxed mb-8 h-20">
+              <p className="text-gray-700 dark:text-white/70 leading-relaxed mb-8 min-h-[80px]">
                 {service.desc}
               </p>
 
@@ -136,7 +136,7 @@ export default function Services() {
                 to="/contact"
                 className={`block text-center py-4 rounded text-sm font-bold uppercase tracking-widest transition-colors ${
                   service.popular 
-                    ? 'bg-gold hover:bg-gold-light text-dark' 
+                    ? 'bg-gold hover:bg-gold-light text-white' 
                     : 'bg-transparent border border-gray-300 dark:border-white hover:border-gold hover:text-gold text-gray-900 dark:text-white'
                 }`}
               >
@@ -163,7 +163,7 @@ export default function Services() {
             </p>
             <Link 
               to="/contact" 
-              className="inline-block bg-gold hover:bg-gold-light text-dark px-10 py-4 rounded font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)]"
+              className="inline-block bg-gold hover:bg-gold-light text-white px-10 py-4 rounded font-bold uppercase tracking-widest transition-colors shadow-[0_4px_24px_rgba(201,168,76,0.3)]"
             >
               Request Custom Quote
             </Link>

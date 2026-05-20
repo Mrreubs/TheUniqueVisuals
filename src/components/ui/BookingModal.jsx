@@ -4,9 +4,11 @@ import { X } from 'lucide-react';
 import { db } from '../../firebase/config';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../contexts/NotificationContext';
 
 export default function BookingModal({ isOpen, onClose }) {
   const { currentUser } = useAuth();
+  const { addNotification } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,7 +53,7 @@ export default function BookingModal({ isOpen, onClose }) {
 
     } catch (error) {
       console.error("Error adding booking: ", error);
-      alert("Failed to send booking request. Ensure Firebase is set up.");
+      addNotification("Failed to send booking request. Ensure Firebase is set up.", "error");
       setIsSubmitting(false);
     }
   };
@@ -81,7 +83,7 @@ export default function BookingModal({ isOpen, onClose }) {
                 </h2>
                 <button
                   onClick={onClose}
-                  className="text-gray-400 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-gray-400 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors p-2.5"
                 >
                   <X size={24} />
                 </button>

@@ -6,9 +6,10 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  updateProfile
+  updateProfile,
+  deleteUser
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 
 const AuthContext = createContext();
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
   });
   const [loading, setLoading] = useState(true);
 
-  async function signup(email, password, displayName) {
+  async function signUp(email, password, displayName) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
@@ -76,7 +77,7 @@ export function AuthProvider({ children }) {
     return user;
   }
 
-  function logout() {
+  function signOutUser() {
     localStorage.removeItem('uv_user');
     localStorage.removeItem('uv_role');
     setCurrentUser(null);
@@ -84,38 +85,76 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  async function updateUserProfile(data) {
+    const user = auth.currentUser;
+    if (!user) throw new Error('No user logged in');
+
+    if (data.displayName) {
+      await updateProfile(user, { displayName: data.displayName });
+      await updateDoc(doc(db, 'users', user.uid), { displayName: data.displayName });
+    }
+
+    const updatedUserData = {
+      uid: user.uid,
+      email: user.email,
+      displayName: data.displayName || user.displayName,
+      photoURL: user.photoURL,
+      role: userRole
+    };
+
+    localStorage.setItem('uv_user', JSON.stringify(updatedUserData));
+    setCurrentUser(updatedUserData);
+  }
+
+  async function deleteAccount() {
+    const user = auth.currentUser;
+    if (!user) throw new Error('No user logged in');
+
+    await deleteDoc(doc(db, 'users', user.uid));
+    await deleteUser(user);
+
+    localStorage.removeItem('uv_user');
+    localStorage.removeItem('uv_role');
+    setCurrentUser(null);
+    setUserRole(null);
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Fetch role from Firestore
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        let role = 'user';
-        
-        if (userDocSnap.exists()) {
-          role = userDocSnap.data().role || 'user';
+      try {
+        if (user) {
+          const userDocRef = doc(db, 'users', user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          let role = 'user';
+
+          if (userDocSnap.exists()) {
+            role = userDocSnap.data().role || 'user';
+          }
+
+          const userData = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            role: role
+          };
+
+          localStorage.setItem('uv_user', JSON.stringify(userData));
+          localStorage.setItem('uv_role', role);
+
+          setCurrentUser(userData);
+          setUserRole(role);
+        } else {
+          localStorage.removeItem('uv_user');
+          localStorage.removeItem('uv_role');
+          setCurrentUser(null);
+          setUserRole(null);
         }
-
-        const userData = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          role: role
-        };
-
-        localStorage.setItem('uv_user', JSON.stringify(userData));
-        localStorage.setItem('uv_role', role);
-        
-        setCurrentUser(userData);
-        setUserRole(role);
-      } else {
-        localStorage.removeItem('uv_user');
-        localStorage.removeItem('uv_role');
-        setCurrentUser(null);
-        setUserRole(null);
+      } catch (err) {
+        console.error('Auth state error:', err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return unsubscribe;
@@ -125,9 +164,11 @@ export function AuthProvider({ children }) {
     currentUser,
     userRole,
     login,
-    signup,
-    logout,
-    googleSignIn
+    signUp,
+    signOut: signOutUser,
+    googleSignIn,
+    updateUserProfile,
+    deleteAccount
   };
 
   return (

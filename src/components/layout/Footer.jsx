@@ -6,20 +6,20 @@ export default function Footer() {
     <footer className="bg-gray-50 dark:bg-dark pt-16 pb-8 border-t border-gray-200 dark:border-white/10">
       <div className="max-w-[75rem] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
-          <Link to="/" className="text-3xl font-display font-bold text-gray-900 dark:text-white tracking-widest uppercase block mb-4">
-            Unique <span className="text-gold">Visuals</span>
+          <Link to="/" className="block mb-4">
+            <img src="/logo.png" alt="Unique Visuals" className="h-12 w-auto" />
           </Link>
           <p className="text-gray-600 dark:text-white/60 mb-6 max-w-sm">
             Capturing timeless moments with an elite touch. We specialize in wedding, portrait, and event photography across Nigeria.
           </p>
           <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
+            <a href="#" className="w-12 h-12 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
               <Instagram size={18} />
             </a>
-            <a href="#" className="w-10 h-10 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
+            <a href="#" className="w-12 h-12 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
               <Twitter size={18} />
             </a>
-            <a href="#" className="w-10 h-10 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
+            <a href="#" className="w-12 h-12 rounded-full border border-gray-300 dark:border-white/20 flex items-center justify-center text-gray-600 dark:text-white hover:border-gold hover:text-gold hover:bg-gold/10 hover:-translate-y-1 transition-all duration-300">
               <Facebook size={18} />
             </a>
           </div>

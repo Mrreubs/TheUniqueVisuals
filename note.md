@@ -91,3 +91,38 @@ use localstorage to store user session.
 
 all measurement should be in rems, % and any other responsive unit of measurement.
 
+
+
+
+
+                                                                                                           
+     ▶ Thought for 726ms                                                                                      
+                                                                                                              
+     Let me look at the layout structure across the site.                                                     
+                                                                                                              
+     → Read src\components\layout\Navbar.jsx 
+     → Read src\App.jsx 
+
+     ▶ Thought for 1.4s
+
+     → Read src\components\ui\WhatsAppButton.jsx 
+     ✱ Glob "**/*.css" in src (1 match)
+     → Read index.html 
+
+     ▶ Thought for 106ms                                                                                      
+                                                                                                              
+     → Read src\index.css                                                                                     
+                                                                                                              
+     ▶ Thought for 4.9s                                                                                       
+                                                                                                              
+     Let me check all the remaining pages for overflow issues.                                                
+                                                                                                              
+     → Read src\pages\Contact.jsx 
+     → Read src\pages\Services.jsx 
+     → Read src\pages\Testimonials.jsx 
+     → Read src\pages\auth\Login.jsx 
+     → Read src\pages\auth\Signup.jsx 
+
+     ▶ Thought for 10.1s
+     ⠋ Read src\pages\admin\Dashboard.jsx 
+     ⠋ Read src\pag

@@ -2,9 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDUsSIFWYQcLboOQ8jubWt0S8MUgebBOnM",
   authDomain: "theuniquevisuals-49635.firebaseapp.com",
@@ -15,9 +13,14 @@ const firebaseConfig = {
   measurementId: "G-GKNYBS9SRF"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Analytics is optional — it can throw on restricted domains / ad blockers
+try {
+  import("firebase/analytics").then(({ getAnalytics, isSupported }) => {
+    isSupported().then((yes) => yes && getAnalytics(app));
+  });
+} catch (e) {}
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);

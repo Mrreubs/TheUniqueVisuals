@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotification } from '../../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '../../firebase/config';
 import { collection, query, getDocs, doc, deleteDoc, addDoc, serverTimestamp, orderBy } from 'firebase/firestore';
@@ -49,7 +50,8 @@ const CustomBarChart = ({ data, title }) => {
 };
 
 export default function Dashboard() {
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('analytics');
 
@@ -68,7 +70,7 @@ export default function Dashboard() {
   ];
   const categoryViewsData = [
     { label: 'Wedding', value: 1250 }, { label: 'Portrait', value: 840 },
-    { label: 'Fashion', value: 620 }, { label: 'Events', value: 930 }
+    { label: 'Fashion', value: 620 }, { label: 'Event', value: 930 }
   ];
 
   useEffect(() => {
@@ -104,7 +106,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut();
       navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
@@ -113,7 +115,7 @@ export default function Dashboard() {
 
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
-    if (!uploadForm.file) return alert('Please select an image file');
+    if (!uploadForm.file) return addNotification('Please select an image file', 'error');
 
     setIsUploading(true);
     try {
@@ -123,16 +125,17 @@ export default function Dashboard() {
       const downloadURL = await getDownloadURL(fileRef);
 
       await addDoc(collection(db, 'portfolio'), {
-        category: uploadForm.category.toLowerCase(),
-        imageUrl: downloadURL,
+        url: downloadURL,
+        category: uploadForm.category,
+        title: uploadForm.category,
         createdAt: serverTimestamp()
       });
 
-      alert('Image uploaded to portfolio successfully!');
+      addNotification('Image uploaded to portfolio successfully!');
       setUploadForm({ category: 'wedding', file: null });
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('Upload failed. Ensure Firebase Storage and Firestore are enabled.');
+      addNotification('Upload failed. Ensure Firebase Storage and Firestore are enabled.', 'error');
     } finally {
       setIsUploading(false);
     }
@@ -143,10 +146,10 @@ export default function Dashboard() {
     try {
       await deleteDoc(doc(db, 'testimonials', id));
       setTestimonialsList(testimonialsList.filter(t => t.id !== id));
-      alert("Deleted successfully");
+      addNotification("Deleted successfully");
     } catch (error) {
       console.error("Error deleting", error);
-      alert("Failed to delete. Check permissions.");
+      addNotification("Failed to delete. Check permissions.", 'error');
     }
   };
 
@@ -155,16 +158,16 @@ export default function Dashboard() {
     try {
       await deleteDoc(doc(db, 'users', id));
       setUsersList(usersList.filter(u => u.id !== id));
-      alert("Deleted successfully");
+      addNotification("Deleted successfully");
     } catch (error) {
       console.error("Error deleting user", error);
-      alert("Failed to delete. Check permissions.");
+      addNotification("Failed to delete. Check permissions.", 'error');
     }
   };
 
   return (
     <div className="bg-white dark:bg-dark text-gray-900 dark:text-white min-h-screen pt-24 pb-16">
-      <div className="max-w-[95%] mx-auto px-4 md:px-8">
+      <div className="max-w-[75rem] mx-auto px-4 md:px-8">
 
         <div className="flex flex-col lg:flex-row gap-8">
 
@@ -217,7 +220,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-3xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-500">
+                      <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center text-gold">
                         <Users size={24} />
                       </div>
                     </div>
@@ -226,7 +229,7 @@ export default function Dashboard() {
                   </div>
                   <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-3xl hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center text-purple-500">
+                      <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center text-gold">
                         <Calendar size={24} />
                       </div>
                     </div>
@@ -268,7 +271,7 @@ export default function Dashboard() {
                         <option value="Wedding">Wedding</option>
                         <option value="Portrait">Portrait</option>
                         <option value="Fashion">Fashion</option>
-                        <option value="Events">Events</option>
+                        <option value="Event">Event</option>
                       </select>
                     </div>
 
@@ -310,7 +313,8 @@ export default function Dashboard() {
                 <h2 className="text-3xl font-semibold mb-2">Client Management</h2>
 
                 <div className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden">
-                  <table className="w-full text-left border-collapse">
+                  <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse min-w-[600px]">
                     <thead>
                       <tr className="border-b border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5">
                         <th className="p-4 font-medium text-gray-600 dark:text-white/60 text-sm">Name</th>
@@ -328,14 +332,15 @@ export default function Dashboard() {
                           <td className="p-4 text-gray-600 dark:text-white/60">{user.email}</td>
                           <td className="p-4 text-gray-600 dark:text-white/60 capitalize">{user.role || 'client'}</td>
                           <td className="p-4 text-right">
-                            <button onClick={() => handleDeleteUser(user.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
-                              <Trash2 size={18} />
-                            </button>
+                             <button onClick={() => handleDeleteUser(user.id)} className="text-red-500 hover:bg-red-500/10 p-3 rounded-lg transition-colors">
+                               <Trash2 size={18} />
+                             </button>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 </div>
               </div>
             )}
@@ -354,13 +359,13 @@ export default function Dashboard() {
                     <div key={item.id} className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-6 rounded-2xl flex justify-between items-start gap-4">
                       <div>
                         <div className="flex gap-2 items-center mb-2">
-                          <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded">{item.rating} Stars</span>
+                          <span className="bg-gold/20 text-gold text-xs px-2 py-1 rounded">{item.rating} Stars</span>
                           <span className="font-medium text-gray-900 dark:text-white">{item.name}</span>
                           <span className="text-xs text-gray-600 dark:text-white/60 ml-2">{item.date}</span>
                         </div>
-                        <p className="text-gray-600 dark:text-white/60 text-sm line-clamp-2">"{item.content}"</p>
+                        <p className="text-gray-600 dark:text-white/60 text-sm line-clamp-2">"{item.review}"</p>
                       </div>
-                      <button onClick={() => handleDeleteTestimonial(item.id)} className="text-red-500 hover:bg-red-500/10 p-2 rounded-lg flex-shrink-0 transition-colors">
+                      <button onClick={() => handleDeleteTestimonial(item.id)} className="text-red-500 hover:bg-red-500/10 p-3 rounded-lg flex-shrink-0 transition-colors">
                         <Trash2 size={18} />
                       </button>
                     </div>
