@@ -25,6 +25,7 @@ npm-debug.log*
 
 # Firebase
 firebase-debug.log
+serviceAccountKey.json
 
 # Vite timestamps
 *.timestamp-*.mjs

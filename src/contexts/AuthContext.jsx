@@ -18,10 +18,15 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-const ADMIN_EMAIL = 'theuniquevisuals15@gmail.com';
+const ADMIN_EMAILS = [
+  'theuniquevisuals15@gmail.com',
+  'admin1@uniquevisuals.test',
+  'admin2@uniquevisuals.test',
+  'admin3@uniquevisuals.test',
+];
 
 function getUserRole(email) {
-  return email?.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user';
+  return ADMIN_EMAILS.includes(email?.toLowerCase()) ? 'admin' : 'user';
 }
 
 export function AuthProvider({ children }) {
