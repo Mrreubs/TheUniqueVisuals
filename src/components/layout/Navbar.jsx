@@ -137,7 +137,7 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <motion.div
             key="panel"
-            className="fixed inset-y-0 right-0 z-50 w-auto min-w-[280px] max-w-[85vw] bg-white dark:bg-dark flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 z-50 w-auto min-w-[280px] max-w-[85vw] max-h-[100dvh] overflow-y-auto bg-white dark:bg-dark flex flex-col shadow-2xl rounded-bl-3xl"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -152,7 +152,7 @@ export default function Navbar() {
               </button>
             </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center gap-8">
+            <div className="flex-1 flex flex-col items-center justify-center gap-6 pb-8 px-8">
               <ul className="flex flex-col items-center gap-6">
                 {navLinks.map((link) => (
                   <li key={link.path}>
@@ -186,7 +186,7 @@ export default function Navbar() {
                 )}
               </ul>
 
-              <div className="flex flex-col items-center gap-6 mt-8 w-full px-12">
+              <div className="flex flex-col items-center gap-6 w-full">
                 <button
                   onClick={toggleTheme}
                   className="text-gray-900 dark:text-white hover:text-gold transition-colors p-2.5"
