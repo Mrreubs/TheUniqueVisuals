@@ -7,7 +7,7 @@ import { db } from '../firebase/config';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 
-const DUMMY_TESTIMONIALS = [
+const FALLBACK_TESTIMONIALS = [
   { id: '1', name: 'Adesuwa & Femi', rating: 5, review: 'Unique Visuals gave us exactly what we wanted for our wedding. The pictures look like they belong in a magazine! Their professionalism was unmatched.', date: 'Oct 2023' },
   { id: '2', name: 'Tunde Bakare', rating: 5, review: 'I hired them for my 40th birthday and they captured the essence of the event perfectly. Highly recommended for anyone looking for premium service.', date: 'Nov 2023' },
   { id: '3', name: 'Zainab O.', rating: 5, review: 'The studio portrait session was a breeze. The team made me feel so comfortable and the final images were stunning. Thank you!', date: 'Jan 2024' },
@@ -18,40 +18,30 @@ export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
+  const { addNotification } = useNotification();
 
   const [rating, setRating] = useState(5);
   const [review, setReview] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const { addNotification } = useNotification();
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    async function fetchTestimonials() {
       try {
         const q = query(collection(db, 'testimonials'), where('approved', '==', true), orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const fetched = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        if (fetched.length > 0) {
-          setTestimonials(fetched);
-        } else {
-          setTestimonials(DUMMY_TESTIMONIALS);
-        }
-      } catch (error) {
-        console.error("Error fetching testimonials:", error);
-        setTestimonials(DUMMY_TESTIMONIALS);
+        const snapshot = await getDocs(q);
+        const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setTestimonials(fetched.length > 0 ? fetched : FALLBACK_TESTIMONIALS);
+      } catch {
+        setTestimonials(FALLBACK_TESTIMONIALS);
       } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchTestimonials();
   }, []);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!currentUser) return;
 
@@ -63,19 +53,18 @@ export default function Testimonials() {
         rating,
         review,
         approved: false,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
       });
       setShowForm(false);
       setReview('');
       setRating(5);
       addNotification('Thank you! Your review has been submitted and is pending approval.');
-    } catch (error) {
-      console.error("Error adding review:", error);
+    } catch {
       addNotification('Failed to submit review. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="bg-white dark:bg-dark min-h-screen pt-32 pb-24">
@@ -86,7 +75,7 @@ export default function Testimonials() {
           <span className="text-gray-900 dark:text-white">Testimonials</span>
         </div>
 
-        <motion.h1 
+        <motion.h1
           className="text-5xl md:text-7xl font-display font-bold text-gray-900 dark:text-white mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -95,7 +84,7 @@ export default function Testimonials() {
           Client <span className="text-gold italic">Love</span>
         </motion.h1>
 
-        <motion.p 
+        <motion.p
           className="text-xl text-gray-700 dark:text-white/70 max-w-2xl mx-auto font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -108,7 +97,7 @@ export default function Testimonials() {
       <section className="max-w-[75rem] mx-auto px-6 mb-24">
         {loading ? (
           <div className="flex justify-center items-center h-32">
-            <div className="w-10 h-10 border-4 border-gray-200 dark:border-white/20 border-t-gold rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-gray-200 dark:border-white/20 border-t-gold rounded-full animate-spin" />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -124,17 +113,17 @@ export default function Testimonials() {
                 <Quote className="absolute top-6 right-6 text-gold/20" size={48} />
                 <div className="flex gap-1 mb-6">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      size={18} 
-                      className={i < t.rating ? "text-gold fill-gold" : "text-gray-300 dark:text-white/20"} 
+                    <Star
+                      key={i}
+                      size={18}
+                      className={i < t.rating ? 'text-gold fill-gold' : 'text-gray-300 dark:text-white/20'}
                     />
                   ))}
                 </div>
-                <p className="text-gray-700 dark:text-white/80 leading-relaxed mb-8 min-h-[100px]">"{t.review}"</p>
+                <p className="text-gray-700 dark:text-white/80 leading-relaxed mb-8">&ldquo;{t.review}&rdquo;</p>
                 <div>
                   <h4 className="text-gray-900 dark:text-white font-bold tracking-widest uppercase">{t.name}</h4>
-                  <p className="text-gray-500 dark:text-white/50 text-sm mt-1">{t.date || "Recent"}</p>
+                  <p className="text-gray-500 dark:text-white/50 text-sm mt-1">{t.date || 'Recent'}</p>
                 </div>
               </motion.div>
             ))}
@@ -143,26 +132,30 @@ export default function Testimonials() {
       </section>
 
       <section className="max-w-3xl mx-auto px-6">
-        <motion.div 
+        <motion.div
           className="bg-gray-50 dark:bg-dark border border-gray-200 dark:border-white/10 rounded-2xl p-8 md:p-12 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">Have we worked together?</h2>
-          <p className="text-gray-600 dark:text-white/60 mb-8">We'd love to hear about your experience with Unique Visuals.</p>
+          <h2 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+            Have we worked together?
+          </h2>
+          <p className="text-gray-600 dark:text-white/60 mb-8">
+            We'd love to hear about your experience with Unique Visuals.
+          </p>
 
           {!showForm ? (
             currentUser ? (
-              <button 
+              <button
                 onClick={() => setShowForm(true)}
                 className="bg-gold hover:bg-gold-light text-white px-8 py-3 rounded font-bold uppercase tracking-widest transition-colors"
               >
                 Write a Review
               </button>
             ) : (
-              <Link 
+              <Link
                 to="/login"
                 className="inline-block bg-gray-200 dark:bg-white/10 hover:bg-gray-300 dark:hover:bg-white/20 text-gray-900 dark:text-white px-8 py-3 rounded font-bold uppercase tracking-widest transition-colors"
               >
@@ -172,7 +165,9 @@ export default function Testimonials() {
           ) : (
             <form onSubmit={handleSubmit} className="text-left mt-8 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-500 dark:text-white/60 mb-2 uppercase tracking-wider">Rating</label>
+                <label className="block text-sm font-medium text-gray-500 dark:text-white/60 mb-2 uppercase tracking-wider">
+                  Rating
+                </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((num) => (
                     <button
@@ -181,22 +176,27 @@ export default function Testimonials() {
                       onClick={() => setRating(num)}
                       className="focus:outline-none p-1.5"
                     >
-                      <Star size={32} className={num <= rating ? "text-gold fill-gold" : "text-gray-300 dark:text-white/20"} />
+                      <Star
+                        size={32}
+                        className={num <= rating ? 'text-gold fill-gold' : 'text-gray-300 dark:text-white/20'}
+                      />
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-500 dark:text-white/60 mb-2 uppercase tracking-wider">Your Review</label>
-                <textarea 
-                  required 
+                <label className="block text-sm font-medium text-gray-500 dark:text-white/60 mb-2 uppercase tracking-wider">
+                  Your Review
+                </label>
+                <textarea
+                  required
                   value={review}
                   onChange={(e) => setReview(e.target.value)}
-                  rows="4" 
-                  className="w-full bg-gray-100 dark:bg-dark-secondary border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors resize-none" 
+                  rows="4"
+                  className="w-full bg-gray-100 dark:bg-dark-secondary border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors resize-none"
                   placeholder="Share your experience..."
-                ></textarea>
+                />
               </div>
 
               <div className="flex gap-4">

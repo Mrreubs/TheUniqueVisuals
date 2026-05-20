@@ -12,17 +12,14 @@ export default function WhatsAppButton() {
       animate={{ scale: 1 }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      transition={{ 
-        type: "spring",
-        stiffness: 260,
-        damping: 20 
-      }}
+      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
     >
       <span className="sr-only">Contact us on WhatsApp</span>
       <FaWhatsapp size={28} />
-      
-      {/* Pulse effect rings */}
-      <span className="absolute w-full h-full rounded-full border-2 border-[#25D366] opacity-75 animate-ping" style={{ animationDuration: '2s' }}></span>
+      <span
+        className="absolute w-full h-full rounded-full border-2 border-[#25D366] opacity-75 animate-ping"
+        style={{ animationDuration: '2s' }}
+      />
     </motion.a>
   );
 }

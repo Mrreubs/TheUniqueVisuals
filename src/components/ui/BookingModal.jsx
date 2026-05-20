@@ -6,57 +6,61 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
 
+const INITIAL_FORM = { name: '', email: '', phone: '', type: '', date: '', message: '' };
+
 export default function BookingModal({ isOpen, onClose }) {
   const { currentUser } = useAuth();
   const { addNotification } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
+    ...INITIAL_FORM,
     name: currentUser?.displayName || '',
     email: currentUser?.email || '',
-    phone: '',
-    type: '',
-    date: '',
-    message: ''
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  function handleChange(e) {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
 
-  const handleSubmit = async (e) => {
+  function formReset() {
+    setFormData({
+      ...INITIAL_FORM,
+      name: currentUser?.displayName || '',
+      email: currentUser?.email || '',
+    });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       await addDoc(collection(db, 'bookings'), {
         ...formData,
         userId: currentUser ? currentUser.uid : 'guest',
         status: 'Pending',
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
       });
-
-      setIsSubmitting(false);
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
-        setFormData({
-          name: currentUser?.displayName || '',
-          email: currentUser?.email || '',
-          phone: '',
-          type: '',
-          date: '',
-          message: ''
-        });
+        formReset();
         onClose();
       }, 3000);
-
-    } catch (error) {
-      console.error("Error adding booking: ", error);
-      addNotification("Failed to send booking request. Ensure Firebase is set up.", "error");
+    } catch {
+      addNotification('Failed to send booking request. Ensure Firebase is set up.', 'error');
+    } finally {
       setIsSubmitting(false);
     }
-  };
+  }
+
+  function closeModal() {
+    if (!isSubmitting) {
+      setSuccess(false);
+      formReset();
+      onClose();
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -66,10 +70,9 @@ export default function BookingModal({ isOpen, onClose }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={closeModal}
             className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm"
           />
-
           <motion.div
             initial={{ opacity: 0, y: 100, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -82,8 +85,9 @@ export default function BookingModal({ isOpen, onClose }) {
                   Book a <span className="text-gold">Shoot</span>
                 </h2>
                 <button
-                  onClick={onClose}
+                  onClick={closeModal}
                   className="text-gray-400 dark:text-white/60 hover:text-gray-900 dark:hover:text-white transition-colors p-2.5"
+                  disabled={isSubmitting}
                 >
                   <X size={24} />
                 </button>
@@ -102,93 +106,40 @@ export default function BookingModal({ isOpen, onClose }) {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Full Name</label>
-                      <input 
-                        required 
-                        type="text" 
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors" 
-                        placeholder="John Doe" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Email Address</label>
-                      <input 
-                        required 
-                        type="email" 
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors" 
-                        placeholder="john@example.com" 
-                      />
-                    </div>
+                    <InputField label="Full Name" name="name" value={formData.name} onChange={handleChange} required />
+                    <InputField label="Email Address" name="email" type="email" value={formData.email} onChange={handleChange} required />
                   </div>
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Phone Number</label>
-                      <input 
-                        required 
-                        type="tel" 
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors" 
-                        placeholder="+234..." 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Type of Shoot</label>
-                      <select 
-                        required 
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors appearance-none"
-                      >
-                        <option value="">Select a category</option>
-                        <option value="Wedding">Wedding</option>
-                        <option value="Portrait">Portrait</option>
-                        <option value="Event">Event</option>
-                        <option value="Fashion">Fashion</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
+                    <InputField label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleChange} required placeholder="+234..." />
+                    <SelectField label="Type of Shoot" name="type" value={formData.type} onChange={handleChange} required>
+                      <option value="">Select a category</option>
+                      <option value="Wedding">Wedding</option>
+                      <option value="Portrait">Portrait</option>
+                      <option value="Event">Event</option>
+                      <option value="Fashion">Fashion</option>
+                      <option value="Other">Other</option>
+                    </SelectField>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Preferred Date</label>
-                    <input 
-                      type="date" 
-                      name="date"
-                      value={formData.date}
-                      onChange={handleChange}
-                      className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors" 
-                    />
-                  </div>
-
+                  <InputField label="Preferred Date" name="date" type="date" value={formData.date} onChange={handleChange} />
                   <div>
                     <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">Message / Details</label>
-                    <textarea 
-                      rows="4" 
+                    <textarea
+                      rows="4"
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors resize-none" 
+                      className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors resize-none"
                       placeholder="Tell us more about your shoot..."
-                    ></textarea>
+                    />
                   </div>
-
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full bg-gold hover:bg-gold/90 text-white font-bold uppercase tracking-widest py-4 rounded-xl hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:hover:translate-y-0 flex justify-center items-center gap-2"
                   >
-                    {isSubmitting && <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+                    {isSubmitting && (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    )}
                     {isSubmitting ? 'Sending...' : 'Submit Request'}
                   </button>
                 </form>
@@ -198,5 +149,35 @@ export default function BookingModal({ isOpen, onClose }) {
         </>
       )}
     </AnimatePresence>
+  );
+}
+
+function InputField({ label, ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">
+        {label}
+      </label>
+      <input
+        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors"
+        {...props}
+      />
+    </div>
+  );
+}
+
+function SelectField({ label, children, ...props }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-600 dark:text-white/60 mb-2 uppercase tracking-wider">
+        {label}
+      </label>
+      <select
+        className="w-full bg-gray-100 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-gold transition-colors appearance-none"
+        {...props}
+      >
+        {children}
+      </select>
+    </div>
   );
 }

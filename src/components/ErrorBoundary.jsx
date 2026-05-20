@@ -3,11 +3,11 @@ import { Component } from 'react';
 export default class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+  static getDerivedStateFromError() {
+    return { hasError: true };
   }
 
   render() {
@@ -16,7 +16,9 @@ export default class ErrorBoundary extends Component {
         <div className="min-h-screen flex items-center justify-center bg-white dark:bg-dark px-6">
           <div className="text-center max-w-lg">
             <div className="text-6xl mb-6 text-gold font-display font-bold">!</div>
-            <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">Something went wrong</h1>
+            <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white mb-4">
+              Something went wrong
+            </h1>
             <p className="text-gray-600 dark:text-white/60 mb-8">
               An unexpected error occurred. Please try refreshing the page.
             </p>

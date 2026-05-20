@@ -5,34 +5,34 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-const BASE = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
+const BASE = import.meta.env.BASE_URL;
 const CATEGORIES = ['All', 'Wedding', 'Portrait', 'Fashion', 'Event'];
 
-const DUMMY_PORTFOLIO = [
-  { id: '1', url: `${BASE}images/couple.webp`, category: "Wedding", title: "Adesuwa & Femi" },
-  { id: '2', url: `${BASE}images/couple-2.webp`, category: "Wedding", title: "Elegant Affair" },
-  { id: '3', url: `${BASE}images/bride-core.webp`, category: "Wedding", title: "The Bride" },
-  { id: '4', url: `${BASE}images/bride-1.webp`, category: "Wedding", title: "Bridal Elegance" },
-  { id: '5', url: `${BASE}images/groom.webp`, category: "Wedding", title: "The Groom" },
-  { id: '6', url: `${BASE}images/groom-2.webp`, category: "Wedding", title: "Groom's Portrait" },
-  { id: '7', url: `${BASE}images/after-party.webp`, category: "Wedding", title: "After Party" },
-  { id: '8', url: `${BASE}images/couple-3.webp`, category: "Wedding", title: "The Vows" },
-  { id: '9', url: `${BASE}images/group.webp`, category: "Event", title: "Gala Night" },
-  { id: '10', url: `${BASE}images/group-2.webp`, category: "Event", title: "Corporate Event" },
-  { id: '11', url: `${BASE}images/img_6051.webp`, category: "Event", title: "Live Show" },
-  { id: '12', url: `${BASE}images/img_6241.webp`, category: "Event", title: "Stage Performance" },
-  { id: '13', url: `${BASE}images/img_8374.webp`, category: "Event", title: "Conference" },
-  { id: '14', url: `${BASE}images/girls-2.webp`, category: "Portrait", title: "Studio Session" },
-  { id: '15', url: `${BASE}images/men.webp`, category: "Portrait", title: "Golden Hour" },
-  { id: '16', url: `${BASE}images/img_4744.webp`, category: "Portrait", title: "Natural Light" },
-  { id: '17', url: `${BASE}images/img_4745.webp`, category: "Portrait", title: "Editorial Shot" },
-  { id: '18', url: `${BASE}images/am.webp`, category: "Portrait", title: "Urban Portrait" },
-  { id: '19', url: `${BASE}images/_mg_1521.webp`, category: "Portrait", title: "Candid Moment" },
-  { id: '20', url: `${BASE}images/couple-core.webp`, category: "Fashion", title: "Vogue Editorial" },
-  { id: '21', url: `${BASE}images/groom-3.webp`, category: "Fashion", title: "Fashion Shoot" },
-  { id: '22', url: `${BASE}images/_mg_1190_1.webp`, category: "Fashion", title: "Runway Style" },
-  { id: '23', url: `${BASE}images/img_9381.webp`, category: "Fashion", title: "Editorial Fashion" },
-  { id: '24', url: `${BASE}images/img_4847.webp`, category: "Fashion", title: "Style Story" },
+const FALLBACK_IMAGES = [
+  { id: '1', url: `${BASE}images/couple.webp`, category: 'Wedding', title: 'Adesuwa & Femi' },
+  { id: '2', url: `${BASE}images/couple-2.webp`, category: 'Wedding', title: 'Elegant Affair' },
+  { id: '3', url: `${BASE}images/bride-core.webp`, category: 'Wedding', title: 'The Bride' },
+  { id: '4', url: `${BASE}images/bride-1.webp`, category: 'Wedding', title: 'Bridal Elegance' },
+  { id: '5', url: `${BASE}images/groom.webp`, category: 'Wedding', title: 'The Groom' },
+  { id: '6', url: `${BASE}images/groom-2.webp`, category: 'Wedding', title: "Groom's Portrait" },
+  { id: '7', url: `${BASE}images/after-party.webp`, category: 'Wedding', title: 'After Party' },
+  { id: '8', url: `${BASE}images/couple-3.webp`, category: 'Wedding', title: 'The Vows' },
+  { id: '9', url: `${BASE}images/group.webp`, category: 'Event', title: 'Gala Night' },
+  { id: '10', url: `${BASE}images/group-2.webp`, category: 'Event', title: 'Corporate Event' },
+  { id: '11', url: `${BASE}images/img_6051.webp`, category: 'Event', title: 'Live Show' },
+  { id: '12', url: `${BASE}images/img_6241.webp`, category: 'Event', title: 'Stage Performance' },
+  { id: '13', url: `${BASE}images/img_8374.webp`, category: 'Event', title: 'Conference' },
+  { id: '14', url: `${BASE}images/girls-2.webp`, category: 'Portrait', title: 'Studio Session' },
+  { id: '15', url: `${BASE}images/men.webp`, category: 'Portrait', title: 'Golden Hour' },
+  { id: '16', url: `${BASE}images/img_4744.webp`, category: 'Portrait', title: 'Natural Light' },
+  { id: '17', url: `${BASE}images/img_4745.webp`, category: 'Portrait', title: 'Editorial Shot' },
+  { id: '18', url: `${BASE}images/am.webp`, category: 'Portrait', title: 'Urban Portrait' },
+  { id: '19', url: `${BASE}images/_mg_1521.webp`, category: 'Portrait', title: 'Candid Moment' },
+  { id: '20', url: `${BASE}images/couple-core.webp`, category: 'Fashion', title: 'Vogue Editorial' },
+  { id: '21', url: `${BASE}images/groom-3.webp`, category: 'Fashion', title: 'Fashion Shoot' },
+  { id: '22', url: `${BASE}images/_mg_1190_1.webp`, category: 'Fashion', title: 'Runway Style' },
+  { id: '23', url: `${BASE}images/img_9381.webp`, category: 'Fashion', title: 'Editorial Fashion' },
+  { id: '24', url: `${BASE}images/img_4847.webp`, category: 'Fashion', title: 'Style Story' },
 ];
 
 export default function Portfolio() {
@@ -42,34 +42,24 @@ export default function Portfolio() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    const fetchPortfolio = async () => {
+    async function fetchPortfolio() {
       try {
         const q = query(collection(db, 'portfolio'), orderBy('uploadedAt', 'desc'));
-        const querySnapshot = await getDocs(q);
-        const fetchedImages = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-
-        if (fetchedImages.length > 0) {
-          setImages(fetchedImages);
-        } else {
-          setImages(DUMMY_PORTFOLIO);
-        }
-      } catch (error) {
-        console.error("Error fetching portfolio:", error);
-        setImages(DUMMY_PORTFOLIO);
+        const snapshot = await getDocs(q);
+        const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setImages(fetched.length > 0 ? fetched : FALLBACK_IMAGES);
+      } catch {
+        setImages(FALLBACK_IMAGES);
       } finally {
         setLoading(false);
       }
-    };
-
+    }
     fetchPortfolio();
   }, []);
 
-  const filteredImages = activeCategory === 'All' 
-    ? images 
-    : images.filter(img => img.category.toLowerCase() === activeCategory.toLowerCase());
+  const filtered = activeCategory === 'All'
+    ? images
+    : images.filter((img) => img.category === activeCategory);
 
   return (
     <div className="bg-white dark:bg-dark min-h-screen pt-32 pb-24">
@@ -80,7 +70,7 @@ export default function Portfolio() {
           <span className="text-gray-900 dark:text-white">Portfolio</span>
         </div>
 
-        <motion.h1 
+        <motion.h1
           className="text-5xl md:text-7xl font-display font-bold text-gray-900 dark:text-white mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -89,7 +79,7 @@ export default function Portfolio() {
           Selected <span className="text-gold italic">Works</span>
         </motion.h1>
 
-        <motion.p 
+        <motion.p
           className="text-gray-700 dark:text-white/70 max-w-2xl mx-auto mb-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -98,18 +88,18 @@ export default function Portfolio() {
           Explore our collection of timeless moments, captured across Nigeria.
         </motion.p>
 
-        <motion.div 
+        <motion.div
           className="flex flex-wrap justify-center gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          {CATEGORIES.map(category => (
+          {CATEGORIES.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-               className={`px-6 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
-                activeCategory === category 
+              className={`px-6 py-3 rounded-full text-sm font-bold tracking-widest uppercase transition-all duration-300 ${
+                activeCategory === category
                   ? 'bg-gold text-white'
                   : 'bg-transparent text-gray-600 dark:text-white border border-gray-300 dark:border-white/20 hover:border-gold hover:text-gold'
               }`}
@@ -123,15 +113,12 @@ export default function Portfolio() {
       <section className="max-w-[75rem] mx-auto px-6">
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="w-12 h-12 border-4 border-gray-200 dark:border-white/20 border-t-gold rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-gray-200 dark:border-white/20 border-t-gold rounded-full animate-spin" />
           </div>
         ) : (
-          <motion.div 
-            layout
-            className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6"
-          >
+          <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
             <AnimatePresence>
-              {filteredImages.map((img) => (
+              {filtered.map((img) => (
                 <motion.div
                   key={img.id}
                   layout
@@ -142,15 +129,15 @@ export default function Portfolio() {
                   className="relative group rounded-xl overflow-hidden cursor-pointer break-inside-avoid"
                   onClick={() => setSelectedImage(img)}
                 >
-                  <img 
-                    src={img.url} 
-                    alt={img.title || img.category} 
+                  <img
+                    src={img.url}
+                    alt={img.title || img.category}
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                     <span className="text-gold text-xs font-bold uppercase tracking-widest mb-1">{img.category}</span>
-                    <h3 className="text-white font-display text-xl font-bold">{img.title || "Untitled"}</h3>
+                    <h3 className="text-white font-display text-xl font-bold">{img.title || 'Untitled'}</h3>
                   </div>
                 </motion.div>
               ))}
@@ -168,9 +155,10 @@ export default function Portfolio() {
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 dark:bg-dark/95 backdrop-blur-sm p-4 md:p-12"
             onClick={() => setSelectedImage(null)}
           >
-             <button 
+            <button
               className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors p-2.5 z-[110]"
               onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+              aria-label="Close"
             >
               <X size={32} />
             </button>
@@ -182,13 +170,15 @@ export default function Portfolio() {
               className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <img 
-                src={selectedImage.url} 
-                alt={selectedImage.title || selectedImage.category} 
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.title || selectedImage.category}
                 className="max-w-full max-h-[80vh] object-contain rounded shadow-2xl"
               />
               <div className="mt-6 text-center">
-                <h3 className="text-2xl font-display font-bold text-white mb-2">{selectedImage.title || "Untitled"}</h3>
+                <h3 className="text-2xl font-display font-bold text-white mb-2">
+                  {selectedImage.title || 'Untitled'}
+                </h3>
                 <p className="text-gold font-bold uppercase tracking-widest text-sm">{selectedImage.category}</p>
               </div>
             </motion.div>

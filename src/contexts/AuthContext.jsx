@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
@@ -18,39 +18,28 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+const ADMIN_EMAIL = 'theuniquevisuals15@gmail.com';
+
+function getUserRole(email) {
+  return email?.toLowerCase() === ADMIN_EMAIL ? 'admin' : 'user';
+}
+
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(() => {
-    try {
-      const cachedUser = localStorage.getItem('uv_user');
-      return cachedUser ? JSON.parse(cachedUser) : null;
-    } catch {
-      localStorage.removeItem('uv_user');
-      return null;
-    }
-  });
-  const [userRole, setUserRole] = useState(() => {
-    return localStorage.getItem('uv_role') || null;
-  });
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   async function signUp(email, password, displayName) {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(user, { displayName });
-    
-    const role = user.email.toLowerCase() === 'theuniquevisuals15@gmail.com' ? 'admin' : 'user';
-
-    // Create user doc in Firestore
-    const userDocRef = doc(db, 'users', user.uid);
-    await setDoc(userDocRef, {
+    const role = getUserRole(email);
+    await setDoc(doc(db, 'users', user.uid), {
       uid: user.uid,
       email: user.email,
-      displayName: displayName,
-      role: role,
+      displayName,
+      role,
       createdAt: new Date().toISOString()
     });
-
     return user;
   }
 
@@ -60,34 +49,27 @@ export function AuthProvider({ children }) {
 
   async function googleSignIn() {
     const provider = new GoogleAuthProvider();
-    const userCredential = await signInWithPopup(auth, provider);
-    const user = userCredential.user;
-
-    // Check if user doc exists, if not create it
+    const { user } = await signInWithPopup(auth, provider);
     const userDocRef = doc(db, 'users', user.uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
-      const role = user.email.toLowerCase() === 'theuniquevisuals15@gmail.com' ? 'admin' : 'user';
       await setDoc(userDocRef, {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,
-        role: role,
+        role: getUserRole(user.email),
         createdAt: new Date().toISOString()
       });
     }
-
     return user;
   }
 
-  function signOutUser() {
-    localStorage.removeItem('uv_user');
-    localStorage.removeItem('uv_role');
+  function signOut() {
     setCurrentUser(null);
     setUserRole(null);
-    return signOut(auth);
+    return firebaseSignOut(auth);
   }
 
   async function updateUserProfile(data) {
@@ -106,81 +88,48 @@ export function AuthProvider({ children }) {
       photoURL: user.photoURL,
       role: userRole
     };
-
-    localStorage.setItem('uv_user', JSON.stringify(updatedUserData));
     setCurrentUser(updatedUserData);
   }
 
   async function deleteAccount() {
     const user = auth.currentUser;
     if (!user) throw new Error('No user logged in');
-
     await deleteDoc(doc(db, 'users', user.uid));
     await deleteUser(user);
-
-    localStorage.removeItem('uv_user');
-    localStorage.removeItem('uv_role');
     setCurrentUser(null);
     setUserRole(null);
   }
 
   useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 5000);
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      try {
-        if (user) {
-          const userDocRef = doc(db, 'users', user.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          let role = 'user';
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        const role = userDocSnap.exists()
+          ? (userDocSnap.data().role || 'user')
+          : getUserRole(user.email);
 
-          if (userDocSnap.exists()) {
-            role = userDocSnap.data().role || 'user';
-          }
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          role
+        };
 
-          const userData = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            role: role
-          };
-
-          localStorage.setItem('uv_user', JSON.stringify(userData));
-          localStorage.setItem('uv_role', role);
-
-          setCurrentUser(userData);
-          setUserRole(role);
-        } else {
-          localStorage.removeItem('uv_user');
-          localStorage.removeItem('uv_role');
-          setCurrentUser(null);
-          setUserRole(null);
-        }
-      } catch (err) {
-        console.error('Auth state error:', err);
-      } finally {
-        setLoading(false);
-        clearTimeout(timeout);
+        setCurrentUser(userData);
+        setUserRole(role);
+      } else {
+        setCurrentUser(null);
+        setUserRole(null);
       }
+      setLoading(false);
     });
 
-    return () => {
-      unsubscribe();
-      clearTimeout(timeout);
-    };
+    return unsubscribe;
   }, []);
 
-  const value = {
-    currentUser,
-    userRole,
-    login,
-    signUp,
-    signOut: signOutUser,
-    googleSignIn,
-    updateUserProfile,
-    deleteAccount
-  };
+  const value = { currentUser, userRole, login, signUp, signOut, googleSignIn, updateUserProfile, deleteAccount };
 
   return (
     <AuthContext.Provider value={value}>

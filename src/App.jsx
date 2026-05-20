@@ -24,32 +24,32 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <ErrorBoundary>
-          <NotificationProvider>
-            <div className="min-h-screen flex flex-col">
-              <Navbar />
-              <main className="flex-grow">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/testimonials" element={<Testimonials />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                  <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-              <Footer />
-              <WhatsAppButton />
-            </div>
-          </NotificationProvider>
-          </ErrorBoundary>
-        </Router>
+        <NotificationProvider>
+          <Router>
+            <ErrorBoundary>
+              <div className="min-h-screen flex flex-col">
+                <Navbar />
+                <main className="flex-grow">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/portfolio" element={<Portfolio />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/testimonials" element={<Testimonials />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                    <Route path="/admin" element={<AdminRoute><Dashboard /></AdminRoute>} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+                <Footer />
+                <WhatsAppButton />
+              </div>
+            </ErrorBoundary>
+          </Router>
+        </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>
   );

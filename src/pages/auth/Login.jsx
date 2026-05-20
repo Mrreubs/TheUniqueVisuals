@@ -15,29 +15,26 @@ export default function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    setError('');
+    setLoading(true);
     try {
-      setError('');
-      setLoading(true);
       await login(email, password);
       navigate('/profile');
-    } catch (err) {
+    } catch {
       setError('Failed to sign in. Please check your credentials.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
   }
 
   async function handleGoogleSignIn() {
+    setError('');
+    setLoading(true);
     try {
-      setError('');
-      setLoading(true);
       await googleSignIn();
       navigate('/profile');
-    } catch (err) {
+    } catch {
       setError('Failed to sign in with Google.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -45,15 +42,17 @@ export default function Login() {
 
   return (
     <div className="bg-white dark:bg-dark text-gray-900 dark:text-white min-h-screen pt-32 pb-16 flex items-center justify-center px-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
         className="w-full max-w-md bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 md:p-10 rounded-3xl backdrop-blur-sm shadow-2xl"
       >
         <div className="text-center mb-10">
           <h2 className="text-3xl font-semibold mb-3">Welcome Back</h2>
-          <p className="text-gray-600 dark:text-white/60 text-sm">Sign in to manage your bookings and testimonials.</p>
+          <p className="text-gray-600 dark:text-white/60 text-sm">
+            Sign in to manage your bookings and testimonials.
+          </p>
         </div>
 
         {error && (
@@ -69,8 +68,8 @@ export default function Login() {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Mail size={18} className="text-gray-400" />
               </div>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -86,8 +85,8 @@ export default function Login() {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock size={18} className="text-gray-400" />
               </div>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -98,7 +97,7 @@ export default function Login() {
           </div>
 
           <div className="pt-2">
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-xl hover:bg-gold hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:hover:bg-gray-900 disabled:dark:hover:bg-white disabled:hover:translate-y-0"
@@ -110,12 +109,12 @@ export default function Login() {
         </form>
 
         <div className="my-8 flex items-center justify-between">
-          <div className="w-full border-t border-gray-200 dark:border-white/10"></div>
+          <div className="w-full border-t border-gray-200 dark:border-white/10" />
           <span className="px-4 text-gray-600 dark:text-white/60 text-sm">OR</span>
-          <div className="w-full border-t border-gray-200 dark:border-white/10"></div>
+          <div className="w-full border-t border-gray-200 dark:border-white/10" />
         </div>
 
-        <button 
+        <button
           onClick={handleGoogleSignIn}
           disabled={loading}
           className="w-full py-3.5 bg-[#4285F4]/10 border border-[#4285F4]/50 text-[#4285F4] font-medium rounded-xl hover:bg-[#4285F4] hover:text-white hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-70"

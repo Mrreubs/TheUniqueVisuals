@@ -15,19 +15,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Analytics is optional — it can throw on restricted domains / ad blockers
-try {
-  import("firebase/analytics").then(({ getAnalytics, isSupported }) => {
-    isSupported().then((yes) => yes && getAnalytics(app));
-  });
-} catch (e) {}
-
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Set persistence to LOCAL so user stays logged in across sessions
 setPersistence(auth, browserLocalPersistence)
-  .catch((error) => {
-    console.error("Firebase persistence error:", error);
-  });
+  .catch((error) => console.error("Firebase persistence error:", error));
