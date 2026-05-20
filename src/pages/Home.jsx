@@ -10,6 +10,11 @@ const HERO_IMAGES = [
   `${BASE}images/_mg_0970.webp`,
   `${BASE}images/bride-core.webp`,
   `${BASE}images/img_8374.webp`,
+  `${BASE}images/couple-core.webp`,
+  `${BASE}images/img_6054.webp`,
+  `${BASE}images/_mg_1526.webp`,
+  `${BASE}images/group-2.webp`,
+  `${BASE}images/_mg_1190_1.webp`,
 ];
 
 const PORTFOLIO_PREVIEW = [
