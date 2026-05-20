@@ -13,8 +13,8 @@ if (!existsSync(outDir)) {
 
 const files = readdirSync(srcDir).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f));
 
-const IMAGE_QUALITY = 80;
-const MAX_WIDTH = 1920;
+const IMAGE_QUALITY = 60;
+const MAX_WIDTH = 1400;
 
 const categoryMap = {
   wedding: ['couple', 'groom', 'bride', 'after-party', 'group', '_MG_'],

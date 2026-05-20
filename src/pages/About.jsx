@@ -131,9 +131,9 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { name: "Emmanuel O.", role: "Lead Photographer", img: "/images/groom.webp" },
-              { name: "Sarah K.", role: "Creative Director", img: "/images/img_4744.webp" },
-              { name: "Michael T.", role: "Lead Editor", img: "/images/men.webp" }
+              { name: "Emmanuel O.", role: "Lead Photographer", img: `${BASE}images/groom.webp` },
+              { name: "Sarah K.", role: "Creative Director", img: `${BASE}images/img_4744.webp` },
+              { name: "Michael T.", role: "Lead Editor", img: `${BASE}images/men.webp` }
             ].map((member, i) => (
               <motion.div 
                 key={i}

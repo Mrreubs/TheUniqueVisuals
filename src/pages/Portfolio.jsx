@@ -5,15 +5,16 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
+const BASE = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
 const CATEGORIES = ['All', 'Wedding', 'Portrait', 'Fashion', 'Event'];
 
 const DUMMY_PORTFOLIO = [
-  { id: '1', url: "/images/couple.webp", category: "Wedding", title: "Adesuwa & Femi" },
-  { id: '2', url: "/images/girls-2.webp", category: "Portrait", title: "Studio Session" },
-  { id: '3', url: "/images/group.webp", category: "Event", title: "Gala Night" },
-  { id: '4', url: "/images/couple-core.webp", category: "Fashion", title: "Vogue Editorial" },
-  { id: '5', url: "/images/couple-3.webp", category: "Wedding", title: "The Vows" },
-  { id: '6', url: "/images/men.webp", category: "Portrait", title: "Golden Hour" },
+  { id: '1', url: `${BASE}images/couple.webp`, category: "Wedding", title: "Adesuwa & Femi" },
+  { id: '2', url: `${BASE}images/girls-2.webp`, category: "Portrait", title: "Studio Session" },
+  { id: '3', url: `${BASE}images/group.webp`, category: "Event", title: "Gala Night" },
+  { id: '4', url: `${BASE}images/couple-core.webp`, category: "Fashion", title: "Vogue Editorial" },
+  { id: '5', url: `${BASE}images/couple-3.webp`, category: "Wedding", title: "The Vows" },
+  { id: '6', url: `${BASE}images/men.webp`, category: "Portrait", title: "Golden Hour" },
 ];
 
 export default function Portfolio() {
