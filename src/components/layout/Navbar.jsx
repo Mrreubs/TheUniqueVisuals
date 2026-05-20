@@ -66,12 +66,15 @@ export default function Navbar() {
         transition={{ duration: 0.5 }}
       >
         <div className="max-w-[75rem] mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className={`transition-colors ${linkColor}`}>
+          <Link to="/" className={`flex items-center gap-3 transition-colors ${linkColor}`}>
             <img
               src={`${import.meta.env.BASE_URL}logo.png`}
               alt="Unique Visuals"
               className="h-12 md:h-14 w-auto"
             />
+            <span className="font-display font-bold text-xl md:text-2xl tracking-wide hidden sm:inline">
+              Unique Visuals
+            </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
