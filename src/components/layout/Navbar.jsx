@@ -72,13 +72,13 @@ export default function Navbar() {
         transition={{ duration: 0.5 }}
       >
         <div className="max-w-[75rem] mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className={`flex items-center gap-2 md:gap-3 transition-colors ${linkColor}`}>
+          <Link to="/" className={`flex items-center gap-2 transition-colors ${linkColor}`}>
             <img
               src={`${import.meta.env.BASE_URL}logo.png`}
               alt="Unique Visuals"
-              className="h-10 sm:h-12 md:h-14 w-auto"
+              className="h-10 sm:h-12 w-auto"
             />
-            <span className="font-display font-bold text-xs sm:text-sm lg:text-xl tracking-wide whitespace-nowrap">
+            <span className="font-display font-bold text-xs sm:text-sm 2xl:text-base tracking-wide whitespace-nowrap">
               Unique Visuals
             </span>
           </Link>
