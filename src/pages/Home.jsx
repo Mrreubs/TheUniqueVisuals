@@ -4,17 +4,19 @@ import { Link } from 'react-router-dom';
 import { Camera, Video, Users, Star, ArrowRight } from 'lucide-react';
 import BookingModal from '../components/ui/BookingModal';
 
+const BASE = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
+
 const HERO_IMAGES = [
-  "/images/couple.webp",
-  "/images/img_4744.webp",
-  "/images/group.webp",
+  `${BASE}images/couple.webp`,
+  `${BASE}images/img_4744.webp`,
+  `${BASE}images/group.webp`,
 ];
 
 const PORTFOLIO_PREVIEW = [
-  { id: 1, url: "/images/couple-2.webp", category: "Wedding", span: "col-span-1 row-span-2" },
-  { id: 2, url: "/images/img_4745.webp", category: "Portrait", span: "col-span-1 row-span-1" },
-  { id: 3, url: "/images/after-party.webp", category: "Event", span: "col-span-1 row-span-1" },
-  { id: 4, url: "/images/bride-core.webp", category: "Fashion", span: "col-span-2 md:col-span-2 row-span-1" },
+  { id: 1, url: `${BASE}images/couple-2.webp`, category: "Wedding", span: "col-span-1 row-span-2" },
+  { id: 2, url: `${BASE}images/img_4745.webp`, category: "Portrait", span: "col-span-1 row-span-1" },
+  { id: 3, url: `${BASE}images/after-party.webp`, category: "Event", span: "col-span-1 row-span-1" },
+  { id: 4, url: `${BASE}images/bride-core.webp`, category: "Fashion", span: "col-span-2 md:col-span-2 row-span-1" },
 ];
 
 export default function Home() {
@@ -126,7 +128,7 @@ export default function Home() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <img src="/images/_mg_1526.webp" alt="Photographer" className="object-cover w-full h-full" />
+          <img src={`${BASE}images/_mg_1526.webp`} alt="Photographer" className="object-cover w-full h-full" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
         </motion.div>
       </section>
@@ -212,7 +214,7 @@ export default function Home() {
 
       <section className="py-32 px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gray-900 dark:bg-dark z-0" />
-        <div className="absolute inset-0 bg-[url('/images/_mg_0970.webp')] bg-cover bg-center opacity-10 z-0 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-cover bg-center opacity-10 z-0 mix-blend-overlay" style={{ backgroundImage: `url(${BASE}images/_mg_0970.webp)` }} />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <h2 className="text-5xl md:text-7xl font-display font-bold text-white mb-8">Ready to create magic?</h2>

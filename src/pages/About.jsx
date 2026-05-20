@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Award, Heart, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+const BASE = typeof import.meta !== 'undefined' ? import.meta.env.BASE_URL : '/';
+
 export default function About() {
   const stats = [
     { value: '10+', label: 'Years Experience' },
@@ -40,7 +42,7 @@ export default function About() {
             transition={{ duration: 1 }}
           >
             <img 
-              src="/images/_mg_0970.webp" 
+              src={`${BASE}images/_mg_0970.webp`} 
               alt="Photographer at work" 
               className="object-cover w-full h-full"
             />

@@ -20,8 +20,13 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
-    const cachedUser = localStorage.getItem('uv_user');
-    return cachedUser ? JSON.parse(cachedUser) : null;
+    try {
+      const cachedUser = localStorage.getItem('uv_user');
+      return cachedUser ? JSON.parse(cachedUser) : null;
+    } catch {
+      localStorage.removeItem('uv_user');
+      return null;
+    }
   });
   const [userRole, setUserRole] = useState(() => {
     return localStorage.getItem('uv_role') || null;
@@ -120,6 +125,8 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    const timeout = setTimeout(() => setLoading(false), 5000);
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       try {
         if (user) {
@@ -154,10 +161,14 @@ export function AuthProvider({ children }) {
         console.error('Auth state error:', err);
       } finally {
         setLoading(false);
+        clearTimeout(timeout);
       }
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const value = {
@@ -173,7 +184,11 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+          <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : children}
     </AuthContext.Provider>
   );
 }

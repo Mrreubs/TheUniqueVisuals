@@ -45,7 +45,7 @@ export default function Navbar() {
     >
       <div className="max-w-[75rem] mx-auto px-6 py-4 flex items-center justify-between">
         <Link to={`/`} className={`flex items-center gap-2 transition-colors ${linkColor} dark:text-white`}>
-          <img src="/logo.png" alt="Unique Visuals" className="h-10 w-auto" />
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Unique Visuals" className="h-10 w-auto" />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">

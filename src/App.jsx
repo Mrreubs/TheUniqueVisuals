@@ -25,8 +25,8 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <NotificationProvider>
           <ErrorBoundary>
+          <NotificationProvider>
             <div className="min-h-screen flex flex-col">
               <Navbar />
               <main className="flex-grow">
@@ -47,8 +47,8 @@ function App() {
               <Footer />
               <WhatsAppButton />
             </div>
-          </ErrorBoundary>
           </NotificationProvider>
+          </ErrorBoundary>
         </Router>
       </AuthProvider>
     </ThemeProvider>

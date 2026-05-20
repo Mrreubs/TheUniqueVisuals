@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-[75rem] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
           <Link to="/" className="block mb-4">
-            <img src="/logo.png" alt="Unique Visuals" className="h-12 w-auto" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Unique Visuals" className="h-12 w-auto" />
           </Link>
           <p className="text-gray-600 dark:text-white/60 mb-6 max-w-sm">
             Capturing timeless moments with an elite touch. We specialize in wedding, portrait, and event photography across Nigeria.
