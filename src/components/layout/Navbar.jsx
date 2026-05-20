@@ -72,7 +72,7 @@ export default function Navbar() {
               alt="Unique Visuals"
               className="h-12 md:h-14 w-auto"
             />
-            <span className="font-display font-bold text-xl md:text-2xl tracking-wide hidden sm:inline">
+            <span className="font-display font-bold text-xl md:text-2xl tracking-wide">
               Unique Visuals
             </span>
           </Link>
