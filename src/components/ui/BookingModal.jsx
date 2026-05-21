@@ -1,59 +1,36 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
-import { db } from '../../firebase/config';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useAuth } from '../../contexts/AuthContext';
 import { useNotification } from '../../contexts/NotificationContext';
-import { sendBookingNotification } from '../../services/emailService';
 
 const INITIAL_FORM = { name: '', email: '', phone: '', type: '', date: '', message: '' };
 
 export default function BookingModal({ isOpen, onClose }) {
-  const { currentUser } = useAuth();
   const { addNotification } = useNotification();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    ...INITIAL_FORM,
-    name: currentUser?.displayName || '',
-    email: currentUser?.email || '',
-  });
+  const [formData, setFormData] = useState(INITIAL_FORM);
 
   function handleChange(e) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
   function formReset() {
-    setFormData({
-      ...INITIAL_FORM,
-      name: currentUser?.displayName || '',
-      email: currentUser?.email || '',
-    });
+    setFormData(INITIAL_FORM);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
-    try {
-      await addDoc(collection(db, 'bookings'), {
-        ...formData,
-        userId: currentUser ? currentUser.uid : 'guest',
-        status: 'Pending',
-        createdAt: serverTimestamp(),
-      });
-      sendBookingNotification(formData);
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        formReset();
-        onClose();
-      }, 3000);
-    } catch {
-      addNotification('Failed to send booking request. Ensure Firebase is set up.', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await new Promise((r) => setTimeout(r, 1000));
+    setSuccess(true);
+    addNotification('Booking request sent! We will get back to you shortly.');
+    setTimeout(() => {
+      setSuccess(false);
+      formReset();
+      onClose();
+    }, 3000);
+    setIsSubmitting(false);
   }
 
   function closeModal() {

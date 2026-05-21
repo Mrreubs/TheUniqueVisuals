@@ -1,10 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import { db } from '../firebase/config';
-import CommentsSection from '../components/ui/CommentsSection';
 
 const BASE = import.meta.env.BASE_URL;
 const CATEGORIES = ['All', 'Wedding', 'Portrait', 'Fashion', 'Event'];
@@ -38,25 +35,8 @@ const FALLBACK_IMAGES = [
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('All');
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
-
-  useEffect(() => {
-    async function fetchPortfolio() {
-      try {
-        const q = query(collection(db, 'portfolio'), orderBy('uploadedAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const fetched = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setImages(fetched.length > 0 ? fetched : FALLBACK_IMAGES);
-      } catch {
-        setImages(FALLBACK_IMAGES);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPortfolio();
-  }, []);
+  const images = FALLBACK_IMAGES;
 
   const filtered = activeCategory === 'All'
     ? images
@@ -112,12 +92,7 @@ export default function Portfolio() {
       </section>
 
       <section className="max-w-[75rem] mx-auto px-6">
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="w-12 h-12 border-4 border-gray-200 dark:border-white/20 border-t-gold rounded-full animate-spin" />
-          </div>
-        ) : (
-          <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+        <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
             <AnimatePresence>
               {filtered.map((img) => (
                 <motion.div
@@ -144,7 +119,6 @@ export default function Portfolio() {
               ))}
             </AnimatePresence>
           </motion.div>
-        )}
       </section>
 
       <AnimatePresence>
@@ -187,9 +161,7 @@ export default function Portfolio() {
         )}
       </AnimatePresence>
 
-      <section className="max-w-[75rem] mx-auto px-6 pt-24 pb-16 border-t border-gray-200 dark:border-white/10 mt-24">
-        <CommentsSection page="portfolio" />
-      </section>
+
     </div>
   );
 }

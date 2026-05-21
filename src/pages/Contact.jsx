@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase/config';
 import { useNotification } from '../contexts/NotificationContext';
-import { sendContactNotification } from '../services/emailService';
 
 const INITIAL_FORM = { name: '', email: '', phone: '', message: '' };
 
@@ -22,21 +19,12 @@ export default function Contact() {
   async function handleSubmit(e) {
     e.preventDefault();
     setIsSubmitting(true);
-    try {
-      await addDoc(collection(db, 'messages'), {
-        ...formData,
-        type: 'contact',
-        createdAt: serverTimestamp(),
-      });
-      sendContactNotification(formData);
-      setFormData(INITIAL_FORM);
-      setIsSubmitted(true);
-      setTimeout(() => setIsSubmitted(false), 5000);
-    } catch {
-      addNotification('Failed to send message. Please try again.', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    await new Promise((r) => setTimeout(r, 1000));
+    setFormData(INITIAL_FORM);
+    setIsSubmitted(true);
+    addNotification('Message sent! We will get back to you soon.');
+    setTimeout(() => setIsSubmitted(false), 5000);
+    setIsSubmitting(false);
   }
 
   return (

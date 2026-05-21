@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -19,8 +17,6 @@ export default function Navbar() {
   const isHome = pathname === '/';
   const [isScrolled, setIsScrolled] = useState(!isHome);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const { currentUser, userRole, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (!isHome) {
@@ -86,52 +82,14 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4 lg:gap-8">
             <ul className="flex items-center gap-6">
               {renderLinks(navLinkClass)}
-              {currentUser && (
-                <li>
-                  <NavLink
-                    to={userRole === 'admin' ? '/admin' : '/profile'}
-                    className={navLinkClass}
-                  >
-                    {userRole === 'admin' ? 'Dashboard' : 'Profile'}
-                  </NavLink>
-                </li>
-              )}
             </ul>
 
-            <div className={`flex items-center gap-4 border-l pl-6 transition-colors ${
-              isScrolled ? 'border-gray-200 dark:border-white/20' : 'border-white/20'
-            }`}>
-              <button
-                onClick={toggleTheme}
-                className={`p-2.5 transition-colors ${linkColor} hover:text-gold`}
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-
-              {currentUser ? (
-                <button
-                  onClick={signOut}
-                  className={`text-sm font-medium uppercase tracking-wider transition-colors hover:text-gold ${linkColor}`}
-                >
-                  Sign Out
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  className={`text-sm font-medium uppercase tracking-wider transition-colors hover:text-gold ${linkColor}`}
-                >
-                  Sign In
-                </Link>
-              )}
-
-              <Link
-                to="/contact"
-                className="bg-gold hover:bg-gold-light text-white px-6 py-3 rounded text-sm font-bold uppercase tracking-wider transition-colors shadow-[0_4px_14px_rgba(201,168,76,0.2)]"
-              >
-                Book a Shoot
-              </Link>
-            </div>
+            <Link
+              to="/contact"
+              className="bg-gold hover:bg-gold-light text-white px-6 py-3 rounded text-sm font-bold uppercase tracking-wider transition-colors shadow-[0_4px_14px_rgba(201,168,76,0.2)]"
+            >
+              Book a Shoot
+            </Link>
           </div>
 
           <button
@@ -176,53 +134,15 @@ export default function Navbar() {
               <div className="flex-1 flex flex-col items-center justify-center gap-6 pb-8 px-8">
                 <ul className="flex flex-col items-center gap-6">
                   {renderLinks(mobileLinkClass, () => setIsMobileOpen(false))}
-                  {currentUser && (
-                    <li>
-                      <NavLink
-                        to={userRole === 'admin' ? '/admin' : '/profile'}
-                        className={mobileLinkClass}
-                        onClick={() => setIsMobileOpen(false)}
-                      >
-                        {userRole === 'admin' ? 'Dashboard' : 'Profile'}
-                      </NavLink>
-                    </li>
-                  )}
                 </ul>
 
-                <div className="flex flex-col items-center gap-6 w-full">
-                  <button
-                    onClick={toggleTheme}
-                    className="text-gray-900 dark:text-white hover:text-gold transition-colors p-2.5"
-                    aria-label="Toggle theme"
-                  >
-                    {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
-                  </button>
-
-                  {currentUser ? (
-                    <button
-                      onClick={() => { signOut(); setIsMobileOpen(false); }}
-                      className="text-lg text-gray-900 dark:text-white hover:text-gold uppercase tracking-wider transition-colors"
-                    >
-                      Sign Out
-                    </button>
-                  ) : (
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMobileOpen(false)}
-                      className="text-lg text-gray-900 dark:text-white hover:text-gold uppercase tracking-wider transition-colors"
-                    >
-                      Sign In
-                    </Link>
-                  )}
-
-                  <Link
-                    to="/contact"
-                    onClick={() => setIsMobileOpen(false)}
-                    className="w-full text-center bg-gold hover:bg-gold-light text-white py-4 rounded text-lg font-bold uppercase tracking-widest transition-colors"
-                  >
-                    Book a Shoot
-                  </Link>
-                </div>
+                <Link
+                  to="/contact"
+                  onClick={() => setIsMobileOpen(false)}
+                  className="w-full text-center bg-gold hover:bg-gold-light text-white py-4 rounded text-lg font-bold uppercase tracking-widest transition-colors"
+                >
+                  Book a Shoot
+                </Link>
               </div>
             </motion.div>
           </>
